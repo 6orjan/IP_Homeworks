@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menuvacnica Borjan</title>
+</head>
+<body>
+    <h2>Denar to USD Converter and Vice Versa</h2>
+
+    <div>
+        <label for="money">Enter sum:</label>
+        <input type="number" id="money" placeholder="Enter money">
+    </div>
+
+    <div>
+        <label for="direction">Convert:</label>
+        <select id="direction">
+            <option value="MKD-USD">MKD to USD</option>
+            <option value="USD-MKD">USD to MKD</option>
+        </select>
+    </div>
+
+    <button onclick="convertCurrency()">Convert</button>
+    <p id="result"></p>
+
+    <script>
+        async function convertCurrency() {
+            const amount = document.getElementById("money").value;
+            const direction = document.getElementById("direction").value;
+            const resultElement = document.getElementById("result");
+
+            if (!amount) {
+                resultElement.textContent = "Please enter an amount in the field above.";
+                return;
+            }
+
+            try {
+            
+                const fromCurrency = direction === "MKD-USD" ? "MKD" : "USD";
+                const toCurrency = direction === "MKD-USD" ? "USD" : "MKD";
+
+              
+                const response = await fetch(`https://v6.exchangerate-api.com/v6/06e33c6ef99cb5e42b4afc5f/latest/${fromCurrency}`);
+
+                const data = await response.json();
+
+                
+                const rate = data.conversion_rates[toCurrency];
+                const convertedAmount = (amount * rate).toFixed(2);
+
+              
+                if (direction === "MKD-USD") {
+                    resultElement.textContent = `${amount} MKD is approximately ${convertedAmount} USD.`;
+                } else {
+                    resultElement.textContent = `${amount} USD is approximately ${convertedAmount} MKD.`;
+                }
+            } catch (error) {
+                resultElement.textContent = "Error fetching exchange rate data. Please try again.";
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
